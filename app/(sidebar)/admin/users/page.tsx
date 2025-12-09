@@ -39,8 +39,7 @@ export default function UsersPage() {
     department: "",
   })
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleCreate = async () => {
     try {
       const res = await fetch("/api/users", {
         method: "POST",
@@ -64,9 +63,7 @@ export default function UsersPage() {
     }
   }
 
-  const handleEdit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
+  const handleEdit = async () => {
     try {
       const res = await fetch(`/api/users/${selectedUser._id}`, {
         method: "PATCH",
@@ -123,58 +120,61 @@ export default function UsersPage() {
 
   return (
     <>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 sm:space-y-6 w-full max-w-screen-xl mx-auto px-3 sm:px-6 py-4 sm:py-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Users</h1>
-            <p className="text-muted-foreground">Manage system users and their roles</p>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Users</h1>
+            <p className="text-sm sm:text-base text-muted-foreground mt-0.5 sm:mt-0">Manage system users and their roles</p>
           </div>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 Add User
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[calc(100%-2rem)] max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Create New User</DialogTitle>
-                <DialogDescription>Add a new user to the system</DialogDescription>
+                <DialogTitle className="text-lg sm:text-xl">Create New User</DialogTitle>
+                <DialogDescription className="text-sm">Add a new user to the system</DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleCreate} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+              <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="name" className="text-sm">Name</Label>
                   <Input
                     id="name"
+                    className="w-full h-10 sm:h-11"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="email" className="text-sm">Email</Label>
                   <Input
                     id="email"
                     type="email"
+                    className="w-full h-10 sm:h-11"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="password" className="text-sm">Password</Label>
                   <Input
                     id="password"
                     type="password"
+                    className="w-full h-10 sm:h-11"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="role" className="text-sm">Role</Label>
                   <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full h-10 sm:h-11">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -184,13 +184,13 @@ export default function UsersPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <Label htmlFor="department" className="text-sm">Department</Label>
                   <Select
                     value={formData.department}
                     onValueChange={(value) => setFormData({ ...formData, department: value })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full h-10 sm:h-11">
                       <SelectValue placeholder="Select department" />
                     </SelectTrigger>
                     <SelectContent>
@@ -202,34 +202,35 @@ export default function UsersPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button type="submit" className="w-full">
+                <Button onClick={handleCreate} className="w-full h-10 sm:h-11 text-sm font-medium">
                   Create User
                 </Button>
-              </form>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
 
-        <div className="relative">
+        <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search users by their name..."
+            placeholder="Search users..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-10 w-full h-10 sm:h-11 text-sm"
           />
         </div>
 
-        <div className="rounded-lg border border-border bg-card">
-          <div className="overflow-x-auto">
-            <table className="w-full">
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
+          {/* Desktop table */}
+          <div className="hidden lg:block w-full overflow-x-auto">
+            <table className="w-full min-w-[800px]">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">Name</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">Email</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">Role</th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">Department</th>
-                  <th className="px-6 py-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
+                  <th className="px-4 xl:px-6 py-3 text-left text-sm font-medium text-muted-foreground">Name</th>
+                  <th className="px-4 xl:px-6 py-3 text-left text-sm font-medium text-muted-foreground">Email</th>
+                  <th className="px-4 xl:px-6 py-3 text-left text-sm font-medium text-muted-foreground">Role</th>
+                  <th className="px-4 xl:px-6 py-3 text-left text-sm font-medium text-muted-foreground">Department</th>
+                  <th className="px-4 xl:px-6 py-3 text-right text-sm font-medium text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -240,15 +241,15 @@ export default function UsersPage() {
                     animate={{ opacity: 1 }}
                     className="border-b border-border last:border-0"
                   >
-                    <td className="px-6 py-4 text-sm font-medium">{user.name}</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{user.email}</td>
-                    <td className="px-6 py-4 text-sm">
+                    <td className="px-4 xl:px-6 py-4 text-sm font-medium">{user.name}</td>
+                    <td className="px-4 xl:px-6 py-4 text-sm text-muted-foreground">{user.email}</td>
+                    <td className="px-4 xl:px-6 py-4 text-sm">
                       <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
                         {user.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">{user.department?.name || "—"}</td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 xl:px-6 py-4 text-sm text-muted-foreground">{user.department?.name || "—"}</td>
+                    <td className="px-4 xl:px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <Button variant="ghost" size="icon" onClick={() => openEditDialog(user)}>
                           <Pencil className="h-4 w-4" />
@@ -263,48 +264,99 @@ export default function UsersPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile/Tablet list */}
+          <div className="lg:hidden p-3 sm:p-4 space-y-3 sm:space-y-4">
+            {filteredUsers?.map((user: any) => (
+              <motion.div
+                key={user._id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="rounded-lg border border-border bg-background p-3 sm:p-4 shadow-sm"
+              >
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-sm sm:text-base font-medium truncate">{user.name}</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground truncate mt-0.5">{user.email}</p>
+                  </div>
+                  <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary whitespace-nowrap">
+                    {user.role}
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs sm:text-sm text-muted-foreground truncate">
+                    {user.department?.name || "No department"}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Edit user"
+                      className="h-8 w-8 sm:h-9 sm:w-9"
+                      onClick={() => openEditDialog(user)}
+                    >
+                      <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Delete user"
+                      className="h-8 w-8 sm:h-9 sm:w-9"
+                      onClick={() => handleDelete(user._id)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
-            <DialogDescription>Update user information</DialogDescription>
+            <DialogTitle className="text-lg sm:text-xl">Edit User</DialogTitle>
+            <DialogDescription className="text-sm">Update user information</DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleEdit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-name">Name</Label>
+          <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="edit-name" className="text-sm">Name</Label>
               <Input
                 id="edit-name"
+                className="w-full h-10 sm:h-11"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-email">Email</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="edit-email" className="text-sm">Email</Label>
               <Input
                 id="edit-email"
                 type="email"
+                className="w-full h-10 sm:h-11"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-password">Password (leave blank to keep current)</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="edit-password" className="text-sm">Password (leave blank to keep current)</Label>
               <Input
                 id="edit-password"
                 type="password"
+                className="w-full h-10 sm:h-11"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-role">Role</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="edit-role" className="text-sm">Role</Label>
               <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full h-10 sm:h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -314,13 +366,13 @@ export default function UsersPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-department">Department</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="edit-department" className="text-sm">Department</Label>
               <Select
                 value={formData.department}
                 onValueChange={(value) => setFormData({ ...formData, department: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full h-10 sm:h-11">
                   <SelectValue placeholder="Select department" />
                 </SelectTrigger>
                 <SelectContent>
@@ -332,10 +384,10 @@ export default function UsersPage() {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full">
+            <Button onClick={handleEdit} className="w-full h-10 sm:h-11 text-sm font-medium">
               Update User
             </Button>
-          </form>
+          </div>
         </DialogContent>
       </Dialog>
     </>

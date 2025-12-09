@@ -101,27 +101,27 @@ export default function DepartmentsPage() {
 
   return (
     <>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 sm:space-y-6 p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Departments</h1>
-            <p className="text-muted-foreground">Manage organizational departments</p>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Departments</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Manage organizational departments</p>
           </div>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Department
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[95vw] max-w-md mx-auto">
               <DialogHeader>
-                <DialogTitle>Create New Department</DialogTitle>
-                <DialogDescription>Add a new department to the organization</DialogDescription>
+                <DialogTitle className="text-lg sm:text-xl">Create New Department</DialogTitle>
+                <DialogDescription className="text-sm">Add a new department to the organization</DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreate} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="name" className="text-sm">Name</Label>
                   <Input
                     id="name"
                     value={formData.name}
@@ -130,7 +130,7 @@ export default function DepartmentsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-sm">Description</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
@@ -146,32 +146,32 @@ export default function DepartmentsPage() {
           </Dialog>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {departments?.map((dept: any) => (
             <motion.div
               key={dept._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-lg border border-border bg-card p-6"
+              className="rounded-lg border border-border bg-card p-4 sm:p-6"
             >
-              <div className="mb-4 flex items-start justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold">{dept.name}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{dept.description || "No description"}</p>
+              <div className="mb-3 sm:mb-4 flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base sm:text-lg font-semibold truncate">{dept.name}</h3>
+                  <p className="mt-1 text-xs sm:text-sm text-muted-foreground line-clamp-2">{dept.description || "No description"}</p>
                 </div>
               </div>
-              <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-                <Users className="h-4 w-4" />
+              <div className="mb-3 sm:mb-4 flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <Users className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>{dept.users?.length || 0} members</span>
               </div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex-1 bg-transparent"
+                  className="flex-1 bg-transparent text-xs sm:text-sm"
                   onClick={() => openEditDialog(dept)}
                 >
-                  <Pencil className="mr-2 h-3 w-3" />
+                  <Pencil className="mr-1 sm:mr-2 h-3 w-3" />
                   Edit
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => handleDelete(dept._id)}>
@@ -184,14 +184,14 @@ export default function DepartmentsPage() {
       </div>
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent>
+        <DialogContent className="w-[95vw] max-w-md mx-auto">
           <DialogHeader>
-            <DialogTitle>Edit Department</DialogTitle>
-            <DialogDescription>Update department information</DialogDescription>
+            <DialogTitle className="text-lg sm:text-xl">Edit Department</DialogTitle>
+            <DialogDescription className="text-sm">Update department information</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleEdit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-name">Name</Label>
+              <Label htmlFor="edit-name" className="text-sm">Name</Label>
               <Input
                 id="edit-name"
                 value={formData.name}
@@ -200,7 +200,7 @@ export default function DepartmentsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-description">Description</Label>
+              <Label htmlFor="edit-description" className="text-sm">Description</Label>
               <Textarea
                 id="edit-description"
                 value={formData.description}

@@ -23,8 +23,8 @@ import { Plus, Mail, Send, Trash2, MailOpen } from "lucide-react"
 import { motion } from "framer-motion"
 import { format } from "date-fns"
 import { useSession } from "next-auth/react"
-import { showToast } from "@/lib/utils/toast"
 import MessagesSkeleton from "@/components/messages-skeleton"
+import { toast } from "sonner"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -72,7 +72,7 @@ export default function MessagesPage() {
 
       if (!res.ok) throw new Error("Failed to send message")
 
-      showToast("success", "Message sent successfully", true)
+      toast.success("Message Sent successfully")
       setIsComposeOpen(false)
       setFormData({
         recipientType: "user",
@@ -87,8 +87,8 @@ export default function MessagesPage() {
       if (selectedThread) {
         openMessage(selectedThread[0])
       }
-    } catch (error) {
-      showToast("error", "Error sending message")
+    } catch (error: any) {
+      toast.error(error.msg)
     }
   }
 
@@ -110,24 +110,27 @@ export default function MessagesPage() {
       const res = await fetch(`/api/messages/${id}`, { method: "DELETE" })
 
       if (!res.ok) throw new Error("Failed to delete message thread")
-
-      showToast("success", "Message thread deleted successfully")
+      toast.success("Message thread deleted successfully")
       mutate()
       setSelectedThread(null)
-    } catch (error) {
-      showToast("error", "Error deleting message thread")
+    } catch (error: any) {
+      toast.error(error.msg)
     }
   }
 
   const openMessage = async (message: any) => {
     try {
       const thread = await fetcher(`/api/messages/${message._id}`)
+      if (thread?.error) {
+        toast.error(thread.error)
+
+      }
       setSelectedThread(thread)
       if (!message.read && box === "inbox") {
         handleMarkAsRead(message._id)
       }
-    } catch (error) {
-      showToast("error", "Failed to load message thread")
+    } catch (error: any) {
+      toast.error(error.message)
     }
   }
 
@@ -322,10 +325,10 @@ export default function MessagesPage() {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle>{selectedThread[0].subject}</CardTitle>
+                      <CardTitle>{selectedThread?.[0]?.subject}</CardTitle>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" onClick={() => handleReply(selectedThread.at(-1))}>
+                      <Button variant="outline" size="sm" onClick={() => handleReply(selectedThread?.at(-1))}>
                         <Send className="mr-2 h-4 w-4" />
                         Reply
                       </Button>
@@ -338,7 +341,7 @@ export default function MessagesPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="max-h-[550px] space-y-4 overflow-y-auto">
-                  {selectedThread.map((message: any, index: number) => (
+                  {selectedThread?.map((message: any, index: number) => (
                     <div key={message._id} className="rounded-lg border border-border bg-muted/20 p-4">
                       <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
                         <p className="font-medium">

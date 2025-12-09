@@ -1,5 +1,5 @@
-import { connectDB } from "../mongodb"
-import { AuditLog } from "../models/AuditLog"
+import { connectDB } from "@/lib/mongodb"
+import { AuditLog } from "@/lib/models/AuditLog"
 
 export async function createAuditLog(action: string, performedBy: string, metadata?: Record<string, any>) {
   try {

@@ -16,16 +16,21 @@ async function getFullThread(rootMessageId: string) {
   return thread
 }
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+    const { id } = await params;
+  console.log(id, "message id from route")
   try {
     const session = await getServerSession(authOptions)
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    } 
 
     await connectDB()
 
-    const message = await Message.findById(params.id)
+    const message = await Message.findById(id)
     if (!message) {
       return NextResponse.json({ error: "Message not found" }, { status: 404 })
     }

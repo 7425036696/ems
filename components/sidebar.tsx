@@ -93,7 +93,7 @@ export function Sidebar({ isOpen = true, toggle, isMobile = false }: SidebarProp
       previousUnreadCount.current = unreadData.count
     }
   }, [unreadData])
-  if (status === "loading") {
+  if (status === "loading" || (status === "authenticated" && !session?.user?.role)) {
     return (
       <SidebarSkeleton />
     );

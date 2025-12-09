@@ -15,8 +15,21 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export default function DashboardPage() {
   const { data: session, status } = useSession()
-  const { data: stats, mutate, isLoading } = useSWR("/api/dashboard/stats", fetcher)
-  if (!stats || status === "loading") {
+  const { data: stats, mutate, isLoading, error } = useSWR("/api/dashboard/stats", fetcher)
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 space-y-4">
+        <p className="text-destructive font-medium">Failed to load dashboard data</p>
+        <Button variant="outline" onClick={() => mutate()} className="gap-2">
+          <RefreshCw className="h-4 w-4" />
+          Retry
+        </Button>
+      </div>
+    )
+  }
+
+  if (isLoading || !stats || status === "loading") {
     return (
         <DashboardSkeleton />
     );

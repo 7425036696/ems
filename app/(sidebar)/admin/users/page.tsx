@@ -40,7 +40,12 @@ export default function UsersPage() {
   })
 
   const handleCreate = async () => {
+    if (formData.password.length < 6) {
+      toast.error("Minimum password length is 6 characters")
+      return
+    }
     try {
+
       const res = await fetch("/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,6 +69,10 @@ export default function UsersPage() {
   }
 
   const handleEdit = async () => {
+    if (formData.password.length < 6) {
+      toast.error("Minimum password length is 6 characters")
+      return
+    }
     try {
       const res = await fetch(`/api/users/${selectedUser._id}`, {
         method: "PATCH",
@@ -283,7 +292,7 @@ export default function UsersPage() {
                     {user.role}
                   </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-xs sm:text-sm text-muted-foreground truncate">
                     {user.department?.name || "No department"}

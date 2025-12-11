@@ -38,6 +38,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { LeaveForm } from "./LeaveForm"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -74,6 +75,24 @@ export default function LeavesPage() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const start = new Date(formData.startDate)
+    const end = new Date(formData.endDate)
+
+    // 1. Start date cannot be before today
+    if (start < today) {
+      showToast("error", "Start date cannot be in the past")
+      return
+    }
+
+    // 2. End date cannot be before start date
+    if (end < start) {
+      showToast("error", "End date cannot be earlier than start date")
+      return
+    }
+
     try {
       const res = await fetch("/api/leaves", {
         method: "POST",
@@ -91,6 +110,7 @@ export default function LeavesPage() {
       showToast("error", "Error submitting leave request")
     }
   }
+
 
   const handleApprove = async (id: string) => {
     try {
@@ -152,73 +172,25 @@ export default function LeavesPage() {
     }
   }
 
+
   const canManageLeaves = session?.user?.role === "HR" || session?.user?.role === "SuperAdmin"
 
   const pendingLeaves = leaves?.filter((l: any) => l.status === "Pending") || []
   const approvedLeaves = leaves?.filter((l: any) => l.status === "Approved") || []
   const rejectedLeaves = leaves?.filter((l: any) => l.status === "Rejected") || []
 
-  const LeaveForm = () => (
-    <form onSubmit={handleCreate} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="type">Leave Type</Label>
-        <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Casual">Casual Leave</SelectItem>
-            <SelectItem value="Sick">Sick Leave</SelectItem>
-            <SelectItem value="Annual">Annual Leave</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="startDate">Start Date</Label>
-        <Input
-          id="startDate"
-          type="date"
-          value={formData.startDate}
-          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-          required
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="endDate">End Date</Label>
-        <Input
-          id="endDate"
-          type="date"
-          value={formData.endDate}
-          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-          required
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="reason">Reason</Label>
-        <Textarea
-          id="reason"
-          value={formData.reason}
-          onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-          rows={3}
-          required
-        />
-      </div>
-      <Button type="submit" className="w-full">
-        Submit Request
-      </Button>
-    </form>
-  )
-
   const LeaveCard = ({ leave, showActions = true }: { leave: any; showActions?: boolean }) => (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
       className="rounded-lg border border-border bg-card p-4 sm:p-6"
     >
-     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 
         <div className="flex-1 space-y-3">
-<div className="flex flex-col sm:flex-row sm:items-center sm:gap-2 gap-1 break-all">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2 gap-1 break-all">
             <h3 className="font-semibold text-base sm:text-lg">{leave.user?.name || "Unknown User"}</h3>
             <span className={`rounded-full border px-2.5 py-1 text-xs font-medium w-fit ${getStatusColor(leave.status)}`}>
               {leave.status}
@@ -252,7 +224,7 @@ export default function LeavesPage() {
         {showActions && (
           <>
             {/* Desktop Actions */}
-<div className="hidden sm:flex flex-wrap gap-2">
+            <div className="hidden sm:flex flex-wrap gap-2">
               {canManageLeaves && leave.status === "Pending" ? (
                 <>
                   <Button variant="outline" size="sm" onClick={() => handleApprove(leave._id)}>
@@ -332,8 +304,11 @@ export default function LeavesPage() {
                 <DialogTitle>Apply for Leave</DialogTitle>
                 <DialogDescription>Submit a new leave request</DialogDescription>
               </DialogHeader>
-              <LeaveForm />
-            </DialogContent>
+              <LeaveForm
+                formData={formData}
+                setFormData={setFormData}
+                handleCreate={handleCreate}
+              />            </DialogContent>
           </Dialog>
         ) : (
           <Drawer open={isCreateOpen} onOpenChange={setIsCreateOpen}>
@@ -349,8 +324,11 @@ export default function LeavesPage() {
                 <DrawerDescription>Submit a new leave request</DrawerDescription>
               </DrawerHeader>
               <div className="px-4 pb-4">
-                <LeaveForm />
-              </div>
+                <LeaveForm
+                  formData={formData}
+                  setFormData={setFormData}
+                  handleCreate={handleCreate}
+                />              </div>
             </DrawerContent>
           </Drawer>
         )}
@@ -361,7 +339,9 @@ export default function LeavesPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs sm:text-sm font-medium">Total</CardTitle>
-              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+              <Calendar
+                className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground dark:text-white/70"
+              />
             </CardHeader>
             <CardContent>
               <div className="text-xl sm:text-2xl font-bold">{stats.total}</div>
@@ -395,7 +375,7 @@ export default function LeavesPage() {
       )}
 
       <Tabs defaultValue="pending" className="space-y-4">
-<TabsList className="flex w-full overflow-x-auto no-scrollbar justify-between gap-2">
+        <TabsList className="flex w-full overflow-x-auto no-scrollbar justify-between gap-2">
           <TabsTrigger value="pending" className="text-xs sm:text-sm">
             <span className="hidden sm:inline">Pending</span>
             <span className="sm:hidden">Pending</span>

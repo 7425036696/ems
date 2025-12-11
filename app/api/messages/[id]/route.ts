@@ -46,6 +46,7 @@ export async function GET(
 }
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+  const {id} = await params;
   try {
     const session = await getServerSession(authOptions)
     if (!session) {
@@ -54,7 +55,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
     await connectDB()
 
-    const message = await Message.findById(params.id)
+    const message = await Message.findById(id)
     if (!message) {
       return NextResponse.json({ error: "Message not found" }, { status: 404 })
     }
@@ -72,6 +73,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  const {id} = await params;
   try {
     const session = await getServerSession(authOptions)
     if (!session) {
@@ -80,7 +82,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 
     await connectDB()
 
-    const message = await Message.findById(params.id)
+    const message = await Message.findById(id)
     if (!message) {
       return NextResponse.json({ error: "Message not found" }, { status: 404 })
     }

@@ -109,12 +109,17 @@ export default function MessagesPage() {
     try {
       const res = await fetch(`/api/messages/${id}`, { method: "DELETE" })
 
-      if (!res.ok) throw new Error("Failed to delete message thread")
+      if (!res.ok) {
+        toast.error("Failed to delete message")
+      }
       toast.success("Message thread deleted successfully")
       mutate()
       setSelectedThread(null)
     } catch (error: any) {
+      console.error(error)
+      if(error.msg){
       toast.error(error.msg)
+      }
     }
   }
 

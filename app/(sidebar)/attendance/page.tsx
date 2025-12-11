@@ -118,7 +118,7 @@ export default function AttendancePage() {
         )}
 
         <Card className="overflow-hidden">
-          <CardHeader className="bg-muted/30">
+          <CardHeader className="">
             <CardTitle>Attendance Hub</CardTitle>
             <CardDescription>Your central point for managing attendance</CardDescription>
           </CardHeader>

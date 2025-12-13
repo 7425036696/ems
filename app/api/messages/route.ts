@@ -6,6 +6,8 @@ import { Message } from "@/lib/models/Message"
 import { User } from "@/lib/models/User"
 import { createAuditLog } from "@/lib/utils/audit-log"
 
+export const dynamic = "force-dynamic"
+
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions)
@@ -21,10 +23,10 @@ export async function GET(request: Request) {
 
     let messages
 
-    const baseQuery = { parentMessage: { $exists: false } } // Only fetch root messages
+    // const baseQuery = { parentMessage: { $exists: false } } // Commented out to show all messages including replies
 
     if (box === "sent") {
-      messages = await Message.find({ ...baseQuery, from: session.user.id })
+      messages = await Message.find({ from: session.user.id })
         .populate("from", "name email")
         .populate("toUser", "name email")
         .populate("toDepartment", "name")
@@ -32,8 +34,7 @@ export async function GET(request: Request) {
     } else {
       const user = await User.findById(session.user.id)
       const query: any = {
-        ...baseQuery,
-        $or: [{ toUser: session.user.id }],
+        $or: [{ toUser: session.user.id }], // Mongoose handles string to ObjectId casting automatically usually, but be aware
       }
       if (user?.department) {
         query.$or.push({ toDepartment: user.department })

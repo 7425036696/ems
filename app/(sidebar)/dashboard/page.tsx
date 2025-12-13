@@ -42,7 +42,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              Welcome back, {session?.user?.name?.split(" ")[0] || "User"}
+              Welcome back, {session?.user?.name || "User"}
             </h1>
             <p className="text-muted-foreground">
               {isAdmin ? "System overview and recent activities" : "Your personal dashboard"}

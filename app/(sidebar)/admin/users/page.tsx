@@ -69,7 +69,7 @@ export default function UsersPage() {
   }
 
   const handleEdit = async () => {
-    if (formData.password.length < 6) {
+    if (formData.password && formData.password.length < 6) {
       toast.error("Minimum password length is 6 characters")
       return
     }
@@ -188,7 +188,6 @@ export default function UsersPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="User">User</SelectItem>
-                      <SelectItem value="HR">HR</SelectItem>
                       <SelectItem value="SuperAdmin">SuperAdmin</SelectItem>
                     </SelectContent>
                   </Select>
@@ -370,7 +369,6 @@ export default function UsersPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="User">User</SelectItem>
-                  <SelectItem value="HR">HR</SelectItem>
                   <SelectItem value="SuperAdmin">SuperAdmin</SelectItem>
                 </SelectContent>
               </Select>

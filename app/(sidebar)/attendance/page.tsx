@@ -168,7 +168,6 @@ export default function AttendancePage() {
         <Card>
           <CardHeader>
             <CardTitle>Attendance History</CardTitle>
-            <CardDescription>Your recent attendance records</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -181,7 +180,12 @@ export default function AttendancePage() {
                   className="flex items-center justify-between rounded-lg border border-border p-4"
                 >
                   <div>
-                    <p className="font-medium">{format(new Date(record.checkIn), "MMMM d, yyyy")}</p>
+                    {session?.user?.role !== "User" && record.user && (
+                      <p className="font-medium">{record.user.name}</p>
+                    )}
+                    <p className={session?.user?.role !== "User" ? "text-sm text-muted-foreground" : "font-medium"}>
+                      {format(new Date(record.checkIn), "MMMM d, yyyy")}
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       {format(new Date(record.checkIn), "HH:mm")} -{" "}
                       {record.checkOut ? format(new Date(record.checkOut), "HH:mm") : "Active"}

@@ -12,9 +12,6 @@ export default withAuth(
     }
 
     // HR routes
-    if (path.startsWith("/hr") && token?.role !== "HR" && token?.role !== "SuperAdmin") {
-      return NextResponse.redirect(new URL("/dashboard", req.url))
-    }
 
     return NextResponse.next()
   },
